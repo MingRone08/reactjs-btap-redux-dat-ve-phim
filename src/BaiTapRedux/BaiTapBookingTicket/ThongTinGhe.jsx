@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { huyGheAction } from '../../redux/action/BaiTapDatVeAction'
 
-export default class ThongTinGhe extends Component {
+class ThongTinGhe extends Component {
     render() {
         return (
             <div>
@@ -20,9 +22,28 @@ export default class ThongTinGhe extends Component {
                                 <th>Hủy</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            
+                        <tbody className='text-warning'>
+                            {this.props.danhSachGheDangDat.map((gheDangDat, index) => {
+                                return <tr key={index}>
+                                    <td>{gheDangDat.soGhe}</td>
+                                    <td>{gheDangDat.gia.toLocaleString()}</td>
+                                    <td>
+                                        <button onClick={() => {
+                                            this.props.dispatch(huyGheAction(gheDangDat.soGhe))
+                                        }}>Hủy</button>
+                                    </td>
+                                </tr>
+                            })}
                         </tbody>
+                        <tfoot>
+                            <tr className='text-warning'>
+                                <td></td>
+                                <td>Tổng tiền</td>
+                                <td>{this.props.danhSachGheDangDat.reduce((tongTien, gheDangDat, index) => {
+                                    return tongTien += gheDangDat.gia;
+                                }, 0).toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
                     </table>
 
                 </div>
@@ -30,3 +51,12 @@ export default class ThongTinGhe extends Component {
         )
     }
 }
+
+
+const mapStateToProps = (state) => {
+    return {
+        danhSachGheDangDat: state.BaiTapDatVeReducer.danhSachGheDangDat
+    }
+}
+
+export default connect(mapStateToProps)(ThongTinGhe)
